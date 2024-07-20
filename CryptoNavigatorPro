@@ -1,0 +1,29 @@
+# scripts/technical_analysis.py
+
+import pandas as pd
+
+def calculate_moving_average(data, window):
+    """
+    Calculate moving average for the given data.
+
+    :param data: Market data as DataFrame
+    :param window: Window size for moving average
+    :return: DataFrame with moving average
+    """
+    data[f'MA_{window}'] = data['price'].rolling(window=window).mean()
+    return data
+
+def calculate_rsi(data, window):
+    """
+    Calculate Relative Strength Index (RSI) for the given data.
+
+    :param data: Market data as DataFrame
+    :param window: Window size for RSI
+    :return: DataFrame with RSI
+    """
+    delta = data['price'].diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+    rs = gain / loss
+    data[f'RSI_{window}'] = 100 - (100 / (1 + rs))
+    return data
